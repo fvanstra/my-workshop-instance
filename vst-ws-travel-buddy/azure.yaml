@@ -22,7 +22,7 @@ services:
                 cpu: "0.5"
                 memory: 1Gi
         description: |
-            A basic Agent Framework travel assistant hosted by Foundry.
+            TravelBuddy is an Agent Framework hosted agent with local Python function tools for destination weather, local time, and currency conversion, plus an OctoTrip Flights MCP connection for live flight search.
         environmentVariables:
             - name: AZURE_AI_PROJECT_ENDPOINT
               value: ${AZURE_AI_PROJECT_ENDPOINT}
@@ -30,6 +30,10 @@ services:
               value: ${AZURE_AI_MODEL_DEPLOYMENT_NAME}
             - name: WORKSHOP_RESOURCE_PREFIX
               value: ${WORKSHOP_RESOURCE_PREFIX}
+            - name: MCP_SERVER_LABEL
+              value: ${MCP_SERVER_LABEL}
+            - name: MCP_SERVER_URL
+              value: ${MCP_SERVER_URL}
         kind: hosted
         metadata:
             tags:
@@ -38,6 +42,28 @@ services:
                 - Azure AI AgentServer
                 - Responses Protocol
                 - Travel Assistant
+                - Function Tools
+                - MCP Tools
+            tool_declarations:
+                - description: Returns mock destination weather for a city and optional date.
+                  name: get_weather
+                  parameters:
+                    city: string
+                    date: string | null
+                - description: Returns the current local time for a destination city.
+                  name: get_local_time
+                  parameters:
+                    city: string
+                - description: Converts mock travel prices between USD, EUR, JPY, and GBP.
+                  name: convert_currency
+                  parameters:
+                    amount: float
+                    from_currency: string
+                    to_currency: string
+                - description: OctoTrip Flights MCP server for live flight search.
+                  name: octotrip-flights
+                  type: mcp
+                  url: ${MCP_SERVER_URL}
         name: vst-ws-travel-buddy
         protocols:
             - protocol: responses
